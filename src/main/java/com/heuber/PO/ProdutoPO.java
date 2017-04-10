@@ -14,19 +14,26 @@ import com.heuber.interfacePO.InterfacePO;
 
 public class ProdutoPO implements InterfacePO<ProdutoTO> {
 
+	private ProdutoPO() {
+	}
+
+	private static ProdutoPO instancia;
+
+	private static synchronized ProdutoPO getInstancia() {
+		if (instancia == null)
+			return instancia = new ProdutoPO();
+		return instancia;
+	}
+
 	private ProdutoTO produtoTO;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.heuber.interfacePO.InterfacePO#salvar()
-	 */
 	@Override
 	public void salvar() throws Exception, SQLException {
-		String sql = "INSERT INTO PRODUTO(DESCRICAO, ESTOQUE ,VALOR, COD_GRUPO, CALIBRE) VALUES(?,?,?,?,?)";
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO PRODUTO(DESCRICAO, ESTOQUE ,VALOR, COD_GRUPO, CALIBRE) VALUES(?,?,?,?,?)");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				this.setStatement(statement);
 				statement.execute();
 			}
@@ -35,11 +42,12 @@ public class ProdutoPO implements InterfacePO<ProdutoTO> {
 
 	@Override
 	public void atualizar() throws Exception {
-		String sql = "UPDATE PRODUTO SET DESCRICAO = ?, ESTOQUE = ?, VALOR =?,"
-				+ " COD_GRUPO = ?, CALIBRE = ? WHERE COD_PRODUTO = ?";
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				"UPDATE PRODUTO SET DESCRICAO = ?, ESTOQUE = ?, VALOR =?,COD_GRUPO = ?, CALIBRE = ? WHERE COD_PRODUTO = ?");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				this.setStatement(statement);
 				statement.setLong(6, this.getProdutoTO().getCodigo());
 				statement.execute();
@@ -49,10 +57,11 @@ public class ProdutoPO implements InterfacePO<ProdutoTO> {
 
 	@Override
 	public void deletar() throws Exception {
-		String sql = "DELET FROM PRODUTO WHERE COD_PRODUTO = ?";
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELET FROM PRODUTO WHERE COD_PRODUTO = ?");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				statement.setLong(1, this.produtoTO.getCodigo());
 				statement.execute();
 			}
@@ -62,18 +71,19 @@ public class ProdutoPO implements InterfacePO<ProdutoTO> {
 	@Override
 	public List<ProdutoTO> select() throws Exception {
 		List<ProdutoTO> listaProduto = new ArrayList<>();
-		String sql = "SELECT * FROM PRODUTO WHERE 1=1";
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM PRODUTO WHERE 1=1");
 
 		if (this.produtoTO.getCodigo() != 0) {
-			sql += " AND COD_PRODUTO = " + this.produtoTO.getCodigo();
+			sql.append(" AND COD_PRODUTO = " + this.produtoTO.getCodigo());
 		}
 
 		if (this.produtoTO.getDescricao() != null) {
-			sql += " AND DESCRICAO = %" + this.produtoTO.getDescricao() + "%";
+			sql.append(" AND DESCRICAO = %" + this.produtoTO.getDescricao() + "%");
 		}
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				try (ResultSet resultSet = statement.executeQuery()) {
 					while (resultSet.next()) {
 						produtoTO = this.transferencia(resultSet);
@@ -125,7 +135,7 @@ public class ProdutoPO implements InterfacePO<ProdutoTO> {
 
 		produtoTO.setEstoque(30);
 		produtoTO.setGrupoTO(grupoTO);
-		produtoTO.setValor(150);
+		produtoTO.setValor(158);
 		produtoTO.setCalibe(35);
 		produtoTO.setGrupoTO(grupoTO);
 		produtoTO.setCodigo(11);

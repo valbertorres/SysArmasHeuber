@@ -13,12 +13,24 @@ import com.heuber.interfacePO.InterfacePO;
 
 public class GrupoPO implements InterfacePO<GrupoTO> {
 
+	private GrupoPO() {
+	}
+	
+	private static GrupoPO instancia;
+
+	private static synchronized GrupoPO getInstancia() {
+		if (instancia == null)
+			return instancia = new GrupoPO();
+		return instancia;
+	}
+
 	private GrupoTO grupoTO;
 
 	public void salvar() throws ClassNotFoundException, SQLException {
-		String sql = "INSERT INTO GRUPO (GP_NOME,GP_MODELO) VALUES(?,?)";
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO GRUPO (GP_NOME,GP_MODELO) VALUES(?,?)");
 		try (Connection conexao = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = conexao.prepareStatement(sql)) {
+			try (PreparedStatement statement = conexao.prepareStatement(sql.toString())) {
 				this.setStatement(statement);
 				statement.execute();
 			}
@@ -28,10 +40,11 @@ public class GrupoPO implements InterfacePO<GrupoTO> {
 
 	@Override
 	public void atualizar() throws Exception {
-		String sql = "UPDATE GRUPO SET GP_NOME = ?, GP_MODELO = ? WHERE COD_GRUPO = ?";
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE GRUPO SET GP_NOME = ?, GP_MODELO = ? WHERE COD_GRUPO = ?");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				this.setStatement(statement);
 				statement.setLong(3, this.grupoTO.getCodigo());
 				statement.execute();
@@ -47,14 +60,15 @@ public class GrupoPO implements InterfacePO<GrupoTO> {
 	@Override
 	public List<GrupoTO> select() throws ClassNotFoundException, SQLException {
 		List<GrupoTO> listaProduto = new ArrayList<>();
-		String sql = "SELECT * FROM GRUPO WHERE 1=1";
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM GRUPO WHERE 1=1");
 
 		if (this.grupoTO.getCodigo() != 0) {
-			sql += " AND COD_GRUPO = " + this.grupoTO.getCodigo();
+			sql.append(" AND COD_GRUPO = " + this.grupoTO.getCodigo());
 		}
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
-			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				try (ResultSet resultSet = statement.executeQuery()) {
 					while (resultSet.next()) {
 						grupoTO = this.transferencia(resultSet);

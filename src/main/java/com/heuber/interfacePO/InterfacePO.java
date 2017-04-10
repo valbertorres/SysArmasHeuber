@@ -10,6 +10,6 @@ public interface InterfacePO<T> {
 
 	public void deletar() throws Exception;
 
-	public List<T> select()throws Exception;
+	public List<T> select() throws Exception;
 
 }
