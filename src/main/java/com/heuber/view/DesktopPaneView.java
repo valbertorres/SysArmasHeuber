@@ -51,6 +51,15 @@ public class DesktopPaneView extends JFrame {
 	private JDesktopPane desktopPane;
 	private JMenu mnLocaes;
 	private JMenuItem mntmLocaoes;
+	private JLabel lbFotoDesktop;
+
+	public JLabel getLbFotoDesktop() {
+		return lbFotoDesktop;
+	}
+
+	public void setLbFotoDesktop(JLabel lbFotoDesktop) {
+		this.lbFotoDesktop = lbFotoDesktop;
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -88,7 +97,7 @@ public class DesktopPaneView extends JFrame {
 
 	private void Gui() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 727, 520);
+		setBounds(100, 100, 1378, 858);
 
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -142,10 +151,20 @@ public class DesktopPaneView extends JFrame {
 		desktopPane = new JDesktopPane();
 		desktopPane.setBackground(SystemColor.activeCaption);
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(desktopPane,
-				GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(desktopPane,
-				GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE));
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addComponent(desktopPane, GroupLayout.PREFERRED_SIZE, 1379, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addComponent(desktopPane, GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
+		);
+
+		lbFotoDesktop = new JLabel("");
+		lbFotoDesktop.setBounds(0, 0, 1391, 739);
+		desktopPane.add(lbFotoDesktop);
 
 		getContentPane().setLayout(groupLayout);
 	}
@@ -253,5 +272,4 @@ public class DesktopPaneView extends JFrame {
 	public void setMntmLocaoes(JMenuItem mntmLocaoes) {
 		this.mntmLocaoes = mntmLocaoes;
 	}
-
 }

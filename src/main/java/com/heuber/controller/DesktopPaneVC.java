@@ -1,13 +1,16 @@
 package com.heuber.controller;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -42,6 +45,7 @@ public class DesktopPaneVC {
 	private JDesktopPane desktopPane;
 	private JMenu mnLocaes;
 	private JMenuItem mntmLocaoes;
+	private JLabel lbFotoDesktop;
 
 	public void inicializar() {
 		this.inicializarComponent();
@@ -61,7 +65,15 @@ public class DesktopPaneVC {
 	private void inicializarComponent() {
 		this.desktopPane = this.desktopClienteView.getDesktopPane();
 		this.mntmCliente = this.desktopClienteView.getMntmCliente();
+		this.lbFotoDesktop = this.desktopClienteView.getLbFotoDesktop();
+		this.fotoDesktopane();
 
+	}
+
+	private void fotoDesktopane() {
+		ImageIcon icone = new ImageIcon(getClass().getResource("/imagens/fotoSistema.jpg"));
+		this.lbFotoDesktop.setIcon(new ImageIcon(icone.getImage().getScaledInstance(this.lbFotoDesktop.getWidth(),
+				this.lbFotoDesktop.getHeight(), Image.SCALE_DEFAULT)));
 	}
 
 	private void abriCliente(boolean view) {
@@ -69,7 +81,7 @@ public class DesktopPaneVC {
 		clienteView.setLocation(280, 130);
 		this.desktopPane.add(clienteView);
 		clienteView.setVisible(true);
-		
+
 	}
 
 	public DesktopPaneView getCadastroClienteView() {

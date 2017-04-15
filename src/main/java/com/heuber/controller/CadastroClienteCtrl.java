@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -99,6 +100,7 @@ public class CadastroClienteCtrl {
 		this.txtDataRegistro.setEditable(false);
 
 	}
+	
 
 	private void inicializarComboCidade() {
 		try {
