@@ -18,7 +18,7 @@ public class CidadePO implements InterfacePO<CidadeTO> {
 
 	private static CidadePO instancia;
 
-	private static synchronized CidadePO getInstancia() {
+	public static synchronized CidadePO getInstancia() {
 		if (instancia == null)
 			return instancia = new CidadePO();
 		return instancia;

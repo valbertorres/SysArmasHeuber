@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.heuber.controller.LoginVC;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -17,6 +20,7 @@ import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.awt.Font;
 import java.awt.Image;
 
@@ -50,15 +54,27 @@ public class LoginView extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public LoginView() {
+	private static LoginView instancia;
+
+	public static synchronized LoginView getInstancia() {
+		if (instancia == null)
+			return instancia = new LoginView();
+		return instancia;
+	}
+
+	private void inicializar() {
+		LoginVC loginVC = LoginVC.getInstancia();
+		loginVC.setLoginView(this);
+		loginVC.inicializar();
+	}
+
+	private LoginView() {
 		this.GuiView();
+		this.inicializar();
 	}
 
 	public void GuiView() {
-		
+
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 440, 450);
 		contentPane = new JPanel();
@@ -70,15 +86,16 @@ public class LoginView extends JFrame {
 		panel.setBackground(SystemColor.inactiveCaption);
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
-		
+
 		JLabel iconLogo = new JLabel("");
-		iconLogo.setBounds(0, 0, 440, 260);		
-		BufferedImage img = null;		
+		iconLogo.setBounds(0, 0, 440, 260);
+		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("/Users/MaryBeds/git/SysArmasHeuber/src/main/java/imagens/logo.jpg"));
-			
+			img = ImageIO
+					.read(new File("C:\\eclips mars\\workspace\\PjHeuberSysArma\\src\\main\\java\\imagens\\logo.jpg"));
+
 		} catch (IOException e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
 		Image scaled = img.getScaledInstance(440, 260, Image.SCALE_SMOOTH);
 		ImageIcon icon = new ImageIcon(scaled);
@@ -98,11 +115,11 @@ public class LoginView extends JFrame {
 		btnCancelar.setForeground(Color.BLACK);
 		btnCancelar.setFont(new Font("Avenir Next", Font.BOLD, 13));
 		btnCancelar.setBackground(new Color(255, 69, 0));
-		
+
 		JLabel lblNewLabel = new JLabel("Login");
 		lblNewLabel.setBounds(95, 269, 61, 16);
 		panel.add(lblNewLabel);
-		
+
 		textField = new JTextField();
 		textField.setBounds(90, 345, 260, 26);
 		panel.add(textField);
@@ -116,7 +133,6 @@ public class LoginView extends JFrame {
 		textField_1.setBounds(90, 288, 260, 26);
 		panel.add(textField_1);
 		textField_1.setColumns(10);
-
 
 	}
 

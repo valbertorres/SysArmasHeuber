@@ -33,7 +33,7 @@ public class LoginVC {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DesktopPaneView desktop = new DesktopPaneView();
+				DesktopPaneView desktop = DesktopPaneView.getInstancia();
 				desktop.setExtendedState(desktop.MAXIMIZED_BOTH);
 				desktop.setVisible(true);
 			}
@@ -62,5 +62,3 @@ public class LoginVC {
 	}
 
 }
-
-

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,13 @@ import com.heuber.fabricadeconexao.FabricaDeConexao;
 import com.heuber.interfacePO.InterfacePO;
 
 public class ClientePO implements InterfacePO<ClienteTO> {
-	
-	private ClientePO(){}
-	
+
+	private ClientePO() {
+	}
+
 	private static ClientePO instancia;
 
-	private static synchronized ClientePO getInstancia() {
+	public static synchronized ClientePO getInstancia() {
 		if (instancia == null)
 			return instancia = new ClientePO();
 		return instancia;
@@ -29,7 +31,8 @@ public class ClientePO implements InterfacePO<ClienteTO> {
 	@Override
 	public void salvar() throws Exception {
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO CLIENTE (CPF, NOME, TELEFONE, COD_CIDADE, ENDERECO) VALUES(?,?,?,?,?)");
+		sql.append(
+				"INSERT INTO CLIENTE (CPF, NOME, TELEFONE, COD_CIDADE, ENDERECO,EMAIL,CEP,BAIRRO,DATA_REGISTRO,DATA_NASCIMENTO) VALUES(?,?,?,?,?,?,?,?,?,?)");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
 			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
@@ -43,13 +46,13 @@ public class ClientePO implements InterfacePO<ClienteTO> {
 	@Override
 	public void atualizar() throws Exception {
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"UPDATE CLIENTE SET CPF =? ,NOME =?, TELEFONE =?, COD_CIDADE =?, ENDERECO = ? WHERE COD_CLIENTE = ?");
+		sql.append("UPDATE CLIENTE SET CPF=?, NOME=?, TELEFONE=?, COD_CIDADE=?, ENDERECO=?,EMAIL=?,"
+				+ "CEP=?,BAIRRO=?,DATA_REGISTRO=?,DATA_NASCIMENTO=? WHERE COD_CLIENTE = ?");
 
 		try (Connection connection = FabricaDeConexao.getInstancia().getConexao()) {
 			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
 				this.setStatemnet(statement);
-				statement.setLong(6, this.cliente.getCodigo());
+				statement.setLong(11, this.cliente.getCodigo());
 				statement.execute();
 			}
 		}
@@ -101,6 +104,9 @@ public class ClientePO implements InterfacePO<ClienteTO> {
 		clienteTO.setNome(resultSet.getString("TELEFONE"));
 		clienteTO.setTelefone(resultSet.getString("TELEFONE"));
 		clienteTO.setEndereco(resultSet.getString("ENDERECO"));
+		clienteTO.setBairro(resultSet.getString("BAIRRO"));
+		clienteTO.setDataRegistro(resultSet.getDate("DATA_REGISTRO").toLocalDate());
+		clienteTO.setDataNascimento(resultSet.getDate("DATA_NASCIMENTO").toLocalDate());
 		clienteTO.setCidadeTO(cidadeTO);
 
 		return clienteTO;
@@ -108,11 +114,19 @@ public class ClientePO implements InterfacePO<ClienteTO> {
 
 	private void setStatemnet(PreparedStatement statement) {
 		try {
+			java.util.Date dateNas = java.sql.Date.valueOf(this.cliente.getDataNascimento());
+			java.util.Date dateReg = java.sql.Date.valueOf(this.cliente.getDataRegistro());
+
 			statement.setString(1, this.cliente.getCpf());
 			statement.setString(2, this.cliente.getNome());
 			statement.setString(3, this.cliente.getTelefone());
 			statement.setLong(4, this.cliente.getCidadeTO().getCodigo());
 			statement.setString(5, this.cliente.getEndereco());
+			statement.setString(6, this.cliente.getEmail());
+			statement.setString(7, this.cliente.getCep());
+			statement.setString(8, this.cliente.getBairro());
+			statement.setDate(9, new java.sql.Date(dateReg.getTime()));
+			statement.setDate(10, new java.sql.Date(dateNas.getTime()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -124,6 +138,36 @@ public class ClientePO implements InterfacePO<ClienteTO> {
 
 	public void setCliente(ClienteTO cliente) {
 		this.cliente = cliente;
+	}
+	
+	public static void main(String[] args) {
+		CidadeTO cidadeTO = new CidadeTO();
+		cidadeTO.setCodigo(1);
+		
+		ClienteTO clienteTO = new ClienteTO();
+		clienteTO.setCidadeTO(cidadeTO);
+		clienteTO.setBairro("d");
+		clienteTO.setCep("55");
+		clienteTO.setCpf("54");
+		clienteTO.setDataNascimento(LocalDate.of(2015, 2, 2));
+		clienteTO.setDataRegistro(LocalDate.of(2015, 02, 02));
+		clienteTO.setEmail("c");
+		clienteTO.setEndereco("s");
+		clienteTO.setNome("d");
+		clienteTO.setNumero("dd");
+		clienteTO.setRua("d");
+		clienteTO.setSexo("m");
+		clienteTO.setTelefone("554");
+		
+		ClientePO clientePO =ClientePO.getInstancia();
+		clientePO.setCliente(clienteTO);
+		try {
+			clientePO.salvar();
+			System.out.println("Salvo com sucesso");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
